@@ -30,7 +30,12 @@ public class AuthUserService implements UserDetailsService {
             return;
         }
 
-        throw new BusinessException("the user already exists");
+        throw new BusinessException(BusinessException.class.getName() ,"the user already exists");
+    }
+
+    public User findByUsername(String username){
+        Optional<User> userFound = repository.findByUsername(username);
+        return userFound.orElse(null);
     }
 
     @Override
@@ -40,6 +45,6 @@ public class AuthUserService implements UserDetailsService {
         if(usernameFound.isPresent()){
             return usernameFound.get();
         }
-        throw new BusinessException("User does not exists");
+        throw new BusinessException(BusinessException.class.getName() ,"User does not exists");
     }
 }
