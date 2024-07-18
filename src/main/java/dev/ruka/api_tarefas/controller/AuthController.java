@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +29,9 @@ public class AuthController {
     AuthenticationManager authenticationManager;
 
     @Autowired
+    PasswordEncoder passwordEncoder;
+
+    @Autowired
     AuthUserService authUserService;
 
     @PostMapping("/register")
@@ -39,20 +43,14 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<UserLoginResponseDTO> loginUser(@RequestBody @Valid UserRequestPayload payload){
-        //cria um token de autenticação utilizando os dado recebidos
-        UsernamePasswordAuthenticationToken userLogin = new UsernamePasswordAuthenticationToken(
-                payload.username(),
-                payload.password());
-
-        //tenta autenticar o usuário, se for possível ser autenticado, gera o token, se não, lança exceção
-        try{
-            authenticationManager.authenticate(userLogin);
-            //gera o token
-            String jwtToken = tokenService.generateToken((User) userLogin.getPrincipal());
-            //retorna o token
-            return ResponseEntity.ok(new UserLoginResponseDTO(jwtToken));
-        } catch (AuthenticationException e){
-            throw new BusinessException(e.getClass().getName(), e.getMessage());
+        //procura o usuário
+        User user = authUserService.findByUsername(payload.username());
+        if(user == null) throw new BusinessException(AuthenticationException.class.getName(), "the user does not exists");
+        if(passwordEncoder.matches(payload.password(), user.getPassword())){
+            String token = tokenService.generateToken(user);
+            return ResponseEntity.ok(new UserLoginResponseDTO(token));
+        } else {
+            throw new BusinessException(AuthenticationException.class.getName(), "incorrect password");
         }
     }
 }

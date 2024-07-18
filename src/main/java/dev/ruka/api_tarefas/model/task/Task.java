@@ -35,10 +35,10 @@ public class Task {
     Boolean urgent;
 
     @ManyToOne
-    @JoinColumn(name = "area_id")
+    @JoinColumn(nullable = false, name = "area_id")
     Area area;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(nullable = false, name = "user_id")
     User user;
 }

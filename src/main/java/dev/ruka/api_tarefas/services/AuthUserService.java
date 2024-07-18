@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class AuthUserService implements UserDetailsService {
+public class AuthUserService{
 
     @Autowired
     UserRepository repository;
@@ -36,15 +36,5 @@ public class AuthUserService implements UserDetailsService {
     public User findByUsername(String username){
         Optional<User> userFound = repository.findByUsername(username);
         return userFound.orElse(null);
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> usernameFound = repository.findByUsername(username);
-
-        if(usernameFound.isPresent()){
-            return usernameFound.get();
-        }
-        throw new BusinessException(BusinessException.class.getName() ,"User does not exists");
     }
 }

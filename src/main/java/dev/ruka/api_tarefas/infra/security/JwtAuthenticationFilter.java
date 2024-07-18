@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -32,15 +33,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if(token != null){
             //valida o token
             String username = tokenService.validateToken(token);
-
+            System.out.println(username);
             //recupera o usuário
-            User user = authUserService.findByUsername(username);
+            UserDetails user = authUserService.findByUsername(username);
 
             //se o usuário existir, autentica ele, se não, lança exceção
             if(user == null) throw new BusinessException(BusinessException.class.getName(), "the user does not exists");
-
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                    user.getUsername(),
+                    user,
                     "",
                     user.getAuthorities());
 
