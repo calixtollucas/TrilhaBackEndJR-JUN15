@@ -20,7 +20,7 @@ public class JWTTokenService {
             Algorithm algorithm = Algorithm.HMAC256(secretKey);
             String token = JWT.create()
                     .withIssuer("api-tarefas-ruka")
-                    .withSubject(user.getUsername())
+                    .withSubject(user.getId().toString())
                     .sign(algorithm);
 
             return token;

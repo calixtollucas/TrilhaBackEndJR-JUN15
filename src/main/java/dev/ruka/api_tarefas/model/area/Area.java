@@ -22,4 +22,8 @@ public class Area {
 
     @Column(nullable = false, unique = true)
     String title;
+
+    public Area(String title) {
+        this.title = title;
+    }
 }
