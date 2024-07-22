@@ -6,7 +6,9 @@ import dev.ruka.api_tarefas.repository.AreaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -25,5 +27,10 @@ public class AreaService {
         }
         //se existir, retorna a mesma
         return foundArea.get();
+    }
+
+    public Set<Area> getAllAreasFromUser(UUID userId) {
+        Optional<Set<Area>> areas = repository.findByUserId(userId);
+        return areas.orElse(null);
     }
 }

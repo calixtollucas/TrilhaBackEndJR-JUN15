@@ -34,13 +34,8 @@ public class User implements UserDetails {
     @Column(nullable = false)
     Role role;
 
-    @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(
-            name = "users_areas",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "area_id")
-    )
-    private Set<Area> areas;
+    @ManyToMany(mappedBy = "users")
+    Set<Area> areas;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -75,6 +70,5 @@ public class User implements UserDetails {
         this.username = username;
         this.password = password;
         this.role = Role.USER;
-        this.areas = new HashSet<>();
     }
 }
