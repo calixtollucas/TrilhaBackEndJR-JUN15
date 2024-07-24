@@ -14,6 +14,6 @@ public interface AreaRepository extends JpaRepository<Area, UUID> {
 
     Optional<Area> findByTitle(String title);
 
-    @Query("SELECT a FROM Area a JOIN users_areas ua WHERE ua.user_id = ?1")
-    Optional<Set<Area>> findByUserId(UUID user);
+    @Query("SELECT area FROM Area area JOIN area.users user WHERE user.id = ?1")
+    Optional<Set<Area>> findByUserId(UUID userId);
 }

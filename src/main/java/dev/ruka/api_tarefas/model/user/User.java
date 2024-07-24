@@ -34,9 +34,6 @@ public class User implements UserDetails {
     @Column(nullable = false)
     Role role;
 
-    @ManyToMany(mappedBy = "users")
-    Set<Area> areas;
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if(this.role == Role.ADMIN){

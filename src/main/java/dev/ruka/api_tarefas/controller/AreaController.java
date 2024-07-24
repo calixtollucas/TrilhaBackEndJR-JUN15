@@ -37,8 +37,21 @@ public class AreaController {
         //persiste área no banco
         token = token.replace("Bearer ", "");
         UUID userId = UUID.fromString(tokenService.validateToken(token));
-        userService.addAreaToUser(userId, savedArea);
+        User user = userService.findById(userId);
+
+        areaService.addUserToArea(user, savedArea);
 
         return ResponseEntity.ok(new AreaResponseDTO(savedArea.getId(), savedArea.getTitle()));
+    }
+
+    @DeleteMapping("/{areaId}")
+    public ResponseEntity deleteArea(@PathVariable UUID areaId, @RequestHeader("Authorization") String token){
+
+        token = token.replace("Bearer ", "");
+        User user = userService.findById(
+                UUID.fromString(tokenService.validateToken(token))
+        );
+        areaService.deleteAreaFromUser(areaId, user);
+        return ResponseEntity.ok().build();
     }
 }

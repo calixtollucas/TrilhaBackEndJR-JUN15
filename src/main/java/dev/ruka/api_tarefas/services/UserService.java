@@ -42,17 +42,4 @@ public class UserService {
         Optional<User> userFound = repository.findById(userId);
         return userFound.orElse(null);
     }
-
-
-    public User addAreaToUser(UUID userId, Area area) {
-        //recupera o usuário
-        Optional<User> userFound = repository.findById(userId);
-        //se o usuário não existir, exceção
-        if (userFound.isEmpty()) throw new BusinessException(BadRequestException.class.getName(), "the user does not exists");
-        //se existir, adiciona a área a sua lista de áreas vinculadas
-        userFound.get().getAreas().add(area);
-        //atualiza o usuário
-        repository.save(userFound.get());
-        return userFound.get();
-    }
 }
