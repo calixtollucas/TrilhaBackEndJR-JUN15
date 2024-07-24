@@ -13,6 +13,8 @@ import dev.ruka.api_tarefas.services.UserService;
 import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
+import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,6 +23,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -45,8 +48,11 @@ public class AreaServiceTest {
     @MockBean
     UserRepository userRepository;
 
-    @Autowired
     @MockBean
+    AreaRepository areaRepository;
+
+    @Autowired
+    @InjectMocks
     AreaService areaService;
 
     @Autowired
@@ -96,5 +102,19 @@ public class AreaServiceTest {
         Set<Area> areaReturned = areaService.getAllAreasFromUser(userId);
 
         Assertions.assertEquals(areasReturn, areaReturned);
+    }
+
+    @Test
+    public void shouldUpdateAnArea(){
+        UUID testAreaId = UUID.randomUUID();
+        AreaRequestPayload testPayload = new AreaRequestPayload("TesteUpdate");
+
+        Mockito.when(areaRepository.findById(Mockito.any(UUID.class))).thenReturn(Optional.of(new Area(testAreaId, "Teste")));
+        Mockito.when(areaRepository.save(Mockito.any(Area.class))).thenReturn(null);
+
+        //o teste deve passar uma área e atualizar as informações desta área
+        Area updatedArea = areaService.updateArea(testAreaId, testPayload);
+        Assertions.assertEquals(new Area(testAreaId, "TesteUpdate").getTitle(), updatedArea.getTitle());
+
     }
 }

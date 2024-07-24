@@ -2,6 +2,7 @@ package dev.ruka.api_tarefas.services;
 
 import dev.ruka.api_tarefas.exceptions.BusinessException;
 import dev.ruka.api_tarefas.model.area.Area;
+import dev.ruka.api_tarefas.model.area.AreaRequestPayload;
 import dev.ruka.api_tarefas.model.user.User;
 import dev.ruka.api_tarefas.repository.AreaRepository;
 import org.apache.coyote.BadRequestException;
@@ -70,5 +71,19 @@ public class AreaService {
         } else {
             throw new BusinessException(BadRequestException.class.getName(), "the area does not contains the user");
         }
+    }
+
+    public Area updateArea(UUID areaId, AreaRequestPayload payload) {
+        //verifica se a área existe
+        Optional<Area> areaFound = repository.findById(areaId);
+        //se nao existir, lança exceção
+        if(areaFound.isEmpty()){
+            throw new BusinessException(BadRequestException.class.getName(), "the area does not exists");
+        }
+        //se existir, altera o titulo e salva
+        Area rawArea = areaFound.get();
+        rawArea.setTitle(payload.title());
+        repository.save(rawArea);
+        return rawArea;
     }
 }

@@ -44,6 +44,12 @@ public class AreaController {
         return ResponseEntity.ok(new AreaResponseDTO(savedArea.getId(), savedArea.getTitle()));
     }
 
+    @PutMapping("/{areaId}")
+    public ResponseEntity<AreaResponseDTO> updateArea(@RequestBody @Valid AreaRequestPayload payload,@PathVariable UUID areaId){
+        Area updatedArea = areaService.updateArea(areaId, payload);
+        return ResponseEntity.ok(new AreaResponseDTO(updatedArea.getId(), updatedArea.getTitle()));
+    }
+
     @DeleteMapping("/{areaId}")
     public ResponseEntity deleteArea(@PathVariable UUID areaId, @RequestHeader("Authorization") String token){
 

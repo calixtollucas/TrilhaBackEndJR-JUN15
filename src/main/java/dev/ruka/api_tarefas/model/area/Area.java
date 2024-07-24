@@ -38,4 +38,10 @@ public class Area {
         this.title = title;
         this.users = new HashSet<>();
     }
+
+    public Area(UUID id, String title){
+        this.id = id;
+        this.title = title;
+        this.users = new HashSet<>();
+    }
 }
