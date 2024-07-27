@@ -33,8 +33,7 @@ public class AreaController {
 
         //persiste área no banco
         Area savedArea = areaService.save(newArea);
-
-        //persiste área no banco
+        
         token = token.replace("Bearer ", "");
         UUID userId = UUID.fromString(tokenService.validateToken(token));
         User user = userService.findById(userId);

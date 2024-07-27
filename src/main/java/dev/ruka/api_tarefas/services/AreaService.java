@@ -86,4 +86,11 @@ public class AreaService {
         repository.save(rawArea);
         return rawArea;
     }
+
+    public Area findAreaById(UUID areaId){
+        Optional<Area> areaFound = repository.findById(areaId);
+        return areaFound.orElseThrow(()->{
+            throw new BusinessException(BadRequestException.class.getName(), "the area does not exists");
+        });
+    }
 }

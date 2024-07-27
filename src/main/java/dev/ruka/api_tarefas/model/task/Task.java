@@ -41,4 +41,13 @@ public class Task {
     @ManyToOne
     @JoinColumn(nullable = false, name = "user_id")
     User user;
+
+    public Task(String title, Area area, User user, Integer important, Integer urgent) {
+        this.title = title;
+        this.area = area;
+        this.user = user;
+        this.important = (important != 0);
+        this.urgent = (urgent != 0);
+        this.complete = false;
+    }
 }
