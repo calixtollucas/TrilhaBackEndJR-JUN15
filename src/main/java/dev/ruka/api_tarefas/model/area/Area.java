@@ -23,7 +23,7 @@ public class Area {
     @Column(nullable = false, unique = true)
     String title;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "user_id")
     User user;
 

@@ -67,9 +67,9 @@ public class AreaServiceTest {
         Mockito.when(areaRepository.save(newArea)).thenReturn(new Area(testAreaId, newArea.getTitle(), user));
 
         Area saved = areaService.save(newArea);
-        AreaResponseDTO responseDTO = new AreaResponseDTO(saved.getId(), saved.getTitle(), saved.getUser().getUsername());
+        AreaResponseDTO responseDTO = new AreaResponseDTO(saved.getId(), saved.getTitle());
 
-        Assertions.assertEquals(new AreaResponseDTO(testAreaId, "Area Teste", "lucas"),
+        Assertions.assertEquals(new AreaResponseDTO(testAreaId, "Area Teste"),
                 responseDTO);
 
     }
@@ -87,5 +87,21 @@ public class AreaServiceTest {
         Set<Area> areasFound = areaService.findAllByUser(user);
 
         Assertions.assertEquals(areasTestResponse, areasFound);
+    }
+
+    @Test
+    void shouldUpdateAnArea(){
+        UUID testAreaId = UUID.randomUUID();
+        Area areaTest = new Area(testAreaId, "Antes do Update");
+
+        //mocka repository
+        Mockito.when(areaRepository.findById(testAreaId)).thenReturn(Optional.of(areaTest));
+        Mockito.when(areaRepository.save(areaTest)).thenReturn(areaTest);
+
+        AreaRequestPayload payload = new AreaRequestPayload("Teste");
+
+        Area updatedArea = areaService.update(payload, testAreaId);
+
+        Assertions.assertEquals(areaTest.getTitle(), updatedArea.getTitle());
     }
 }

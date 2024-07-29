@@ -4,6 +4,5 @@ import java.util.UUID;
 
 public record AreaResponseDTO(
         UUID id,
-        String title,
-        String user) {
+        String title) {
 }

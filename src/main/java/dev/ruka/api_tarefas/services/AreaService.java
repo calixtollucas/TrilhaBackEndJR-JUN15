@@ -52,4 +52,16 @@ public class AreaService {
                 )
         );
     }
+
+    public Area update(AreaRequestPayload payload, UUID areaId) {
+        Area areaFound = this.findAreaById(areaId);
+        areaFound.setTitle(payload.title());
+        repository.save(areaFound);
+        return areaFound;
+    }
+
+    public void delete(UUID areaId){
+        Area area = this.findAreaById(areaId);
+        repository.delete(area);
+    }
 }

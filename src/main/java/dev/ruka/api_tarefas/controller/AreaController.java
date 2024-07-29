@@ -39,7 +39,7 @@ public class AreaController {
 
         Area saved = areaService.save(newArea);
 
-        return ResponseEntity.ok(new AreaResponseDTO(saved.getId(), saved.getTitle(), saved.getUser().getUsername()));
+        return ResponseEntity.ok(new AreaResponseDTO(saved.getId(), saved.getTitle()));
     }
 
     /**
@@ -58,9 +58,26 @@ public class AreaController {
         Set<Area> areasFound = areaService.findAllByUser(user);
 
         Set<AreaResponseDTO> areasDTO = areasFound.stream()
-                .map((area) -> new AreaResponseDTO(area.getId(), area.getTitle(), area.getUser().getUsername()))
+                .map((area) -> new AreaResponseDTO(area.getId(), area.getTitle()))
                 .collect(Collectors.toSet());
 
         return ResponseEntity.ok(areasDTO);
+    }
+
+    @PutMapping("/{areaId}")
+    public ResponseEntity<AreaResponseDTO> updateArea(
+            @RequestBody @Valid AreaRequestPayload payload,
+            @RequestHeader("Authorization") String token,
+            @PathVariable("areaId") UUID areaId) {
+
+        Area updatedArea = areaService.update(payload, areaId);
+
+        return ResponseEntity.ok(new AreaResponseDTO(updatedArea.getId(), updatedArea.getTitle()));
+    }
+
+    @DeleteMapping("/{areaId}")
+    public ResponseEntity<String> deleteArea(@PathVariable("areaId") UUID areaId){
+        areaService.delete(areaId);
+        return ResponseEntity.ok("deleted with success");
     }
 }
