@@ -6,9 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -26,22 +23,17 @@ public class Area {
     @Column(nullable = false, unique = true)
     String title;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "users_areas",
-            joinColumns = @JoinColumn(name = "area_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    Set<User> users;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    User user;
 
-    public Area(String title) {
+    public Area(String title, User user) {
         this.title = title;
-        this.users = new HashSet<>();
+        this.user = user;
     }
 
     public Area(UUID id, String title){
         this.id = id;
         this.title = title;
-        this.users = new HashSet<>();
     }
 }

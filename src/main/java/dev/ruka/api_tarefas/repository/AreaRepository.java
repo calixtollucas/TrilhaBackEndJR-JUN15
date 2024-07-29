@@ -1,8 +1,8 @@
 package dev.ruka.api_tarefas.repository;
 
 import dev.ruka.api_tarefas.model.area.Area;
+import dev.ruka.api_tarefas.model.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -14,6 +14,7 @@ public interface AreaRepository extends JpaRepository<Area, UUID> {
 
     Optional<Area> findByTitle(String title);
 
-    @Query("SELECT area FROM Area area JOIN area.users user WHERE user.id = ?1")
-    Optional<Set<Area>> findByUserId(UUID userId);
+    Optional<Set<Area>> findByUser(User user);
+
+    Optional<Set<Area>> findAllByUser(User user);
 }

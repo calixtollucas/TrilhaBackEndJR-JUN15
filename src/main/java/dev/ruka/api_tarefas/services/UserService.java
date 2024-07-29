@@ -7,6 +7,7 @@ import dev.ruka.api_tarefas.model.user.UserRequestPayload;
 import dev.ruka.api_tarefas.repository.UserRepository;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -40,6 +41,9 @@ public class UserService {
 
     public User findById(UUID userId){
         Optional<User> userFound = repository.findById(userId);
-        return userFound.orElse(null);
+        return userFound.orElseThrow(
+                ()-> new BusinessException(ChangeSetPersister.NotFoundException.class.getName(),
+                        "The user does not exists")
+        );
     }
 }

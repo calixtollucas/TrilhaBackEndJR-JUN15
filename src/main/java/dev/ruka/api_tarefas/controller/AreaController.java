@@ -12,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/areas")
@@ -28,35 +30,37 @@ public class AreaController {
     AreaService areaService;
 
     @PostMapping
-    public ResponseEntity<AreaResponseDTO> registerArea(@RequestBody @Valid AreaRequestPayload payload, @RequestHeader(name = "Authorization") String token){
-        Area newArea = new Area(payload.title());
-
-        //persiste área no banco
-        Area savedArea = areaService.save(newArea);
-        
+    public ResponseEntity<AreaResponseDTO> registerArea(@RequestBody @Valid AreaRequestPayload payload, @RequestHeader("Authorization") String token){
         token = token.replace("Bearer ", "");
         UUID userId = UUID.fromString(tokenService.validateToken(token));
         User user = userService.findById(userId);
 
-        areaService.addUserToArea(user, savedArea);
+        Area newArea = new Area(payload.title(), user);
 
-        return ResponseEntity.ok(new AreaResponseDTO(savedArea.getId(), savedArea.getTitle()));
+        Area saved = areaService.save(newArea);
+
+        return ResponseEntity.ok(new AreaResponseDTO(saved.getId(), saved.getTitle(), saved.getUser().getUsername()));
     }
 
-    @PutMapping("/{areaId}")
-    public ResponseEntity<AreaResponseDTO> updateArea(@RequestBody @Valid AreaRequestPayload payload,@PathVariable UUID areaId){
-        Area updatedArea = areaService.updateArea(areaId, payload);
-        return ResponseEntity.ok(new AreaResponseDTO(updatedArea.getId(), updatedArea.getTitle()));
-    }
-
-    @DeleteMapping("/{areaId}")
-    public ResponseEntity deleteArea(@PathVariable UUID areaId, @RequestHeader("Authorization") String token){
-
+    /**
+     *
+     * @param token
+     * @return "all the areas from the logged user"
+     *
+     * This endpoint returns a Set of all areas from a logged user
+     */
+    @GetMapping
+    public ResponseEntity<Set<AreaResponseDTO>> getAllAreasFromUser(@RequestHeader("Authorization")String token){
         token = token.replace("Bearer ", "");
-        User user = userService.findById(
-                UUID.fromString(tokenService.validateToken(token))
-        );
-        areaService.deleteAreaFromUser(areaId, user);
-        return ResponseEntity.ok().build();
+        UUID userId = UUID.fromString(tokenService.validateToken(token));
+
+        User user = userService.findById(userId);
+        Set<Area> areasFound = areaService.findAllByUser(user);
+
+        Set<AreaResponseDTO> areasDTO = areasFound.stream()
+                .map((area) -> new AreaResponseDTO(area.getId(), area.getTitle(), area.getUser().getUsername()))
+                .collect(Collectors.toSet());
+
+        return ResponseEntity.ok(areasDTO);
     }
 }
