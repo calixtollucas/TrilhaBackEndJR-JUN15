@@ -1,5 +1,6 @@
 package dev.ruka.api_tarefas.repository;
 
+import dev.ruka.api_tarefas.model.area.Area;
 import dev.ruka.api_tarefas.model.task.Task;
 import dev.ruka.api_tarefas.model.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,5 +12,8 @@ import java.util.UUID;
 
 @Repository
 public interface TaskRepository extends JpaRepository<Task, UUID> {
-    Optional<Set<Task>> findByUser(User user);
+
+    Optional<Set<Task>> findAllByUser(User user);
+
+    Optional<Set<Task>> findAllByArea(Area area);
 }
