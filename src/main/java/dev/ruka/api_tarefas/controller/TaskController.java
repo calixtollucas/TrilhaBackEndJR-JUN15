@@ -34,7 +34,7 @@ public class TaskController {
     @Autowired
     JWTTokenService tokenService;
 
-
+    //REGISTER TASK
     @PostMapping
     public ResponseEntity<TaskResponseDTO> registerTask(@RequestBody @Valid TaskRequestPayload payload, @RequestHeader("Authorization") String token){
 
@@ -57,6 +57,7 @@ public class TaskController {
                 newTask.getComplete()));
     }
 
+    //GET TASKS FROM CURRENT USER
     @GetMapping
     public ResponseEntity<Set<TaskResponseDTO>> getAllTasksFromUser(@RequestHeader("Authorization") String token){
         token = token.replace("Bearer ", "");
@@ -82,6 +83,7 @@ public class TaskController {
         return ResponseEntity.ok(responsedto);
     }
 
+    //GET TASKS FROM AREA ID
     @GetMapping("/{areaId}")
     public ResponseEntity<Set<TaskResponseDTO>> getAllTasksFromArea(@PathVariable("areaId") UUID areaId){
         Area area = areaService.findAreaById(areaId);
@@ -105,6 +107,7 @@ public class TaskController {
         return ResponseEntity.ok(responseDto);
     }
 
+    //GET TASK FROM ID
     @GetMapping("/task/{taskId}")
     public ResponseEntity<TaskResponseDTO> getTaskFromId(@PathVariable("taskId") UUID taskId){
         Task returned = taskService.findById(taskId);
@@ -119,6 +122,7 @@ public class TaskController {
         ));
     }
 
+    //COMPLETE TASK
     @PutMapping("/{taskId}/complete")
     public ResponseEntity<TaskResponseDTO> completeTask(@PathVariable("taskId") UUID taskId){
         Task task = taskService.complete(taskId);
@@ -131,6 +135,23 @@ public class TaskController {
                         task.getUrgent(),
                         task.getComplete()
                         )
+        );
+    }
+
+    //UPDATE TASK
+    @PutMapping("/{taskId}")
+    public ResponseEntity<TaskResponseDTO> updateTask(@RequestBody @Valid TaskRequestPayload payload, @PathVariable("taskId") UUID taskId){
+        Task updated = taskService.update(payload, taskId);
+        return ResponseEntity.ok(
+                new TaskResponseDTO(
+                        updated.getId(),
+                        updated.getTitle(),
+                        updated.getArea().getTitle(),
+                        updated.getUser().getUsername(),
+                        updated.getImportant(),
+                        updated.getUrgent(),
+                        updated.getComplete()
+                )
         );
     }
 }

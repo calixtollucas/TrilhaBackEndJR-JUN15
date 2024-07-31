@@ -7,9 +7,9 @@ import jakarta.validation.constraints.PositiveOrZero;
 import java.util.UUID;
 
 public record TaskRequestPayload(
-        @NotNull String taskTitle,
-        @NotNull UUID areaId,
-        @PositiveOrZero Integer important,
-        @PositiveOrZero Integer urgent
+        String taskTitle,
+        UUID areaId,
+        Integer important,
+        Integer urgent
 ) {
 }

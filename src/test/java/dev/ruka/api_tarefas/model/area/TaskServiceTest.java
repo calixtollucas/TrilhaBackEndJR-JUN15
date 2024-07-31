@@ -13,7 +13,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
-import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -57,8 +56,8 @@ public class TaskServiceTest {
         UUID testUserId = UUID.randomUUID();
         UUID testAreaId = UUID.randomUUID();
 
-        User testUser = new User(testUserId, "Lucas", "lucas123", Role.USER);
-        Area testArea = new Area(testAreaId, "Area Teste");
+        testUser = new User(testUserId, "Lucas", "lucas123", Role.USER);
+        testArea = new Area(testAreaId, "Area Teste");
     }
 
     @Test
@@ -125,7 +124,6 @@ public class TaskServiceTest {
         Task testTask = new Task(testTaskId, "Teste", false, false, false, testArea, testUser);
 
         Mockito.when(taskRepository.findById(testTaskId)).thenReturn(Optional.of(testTask));
-
         Task returnedTask = taskService.findById(testTaskId);
 
         Assertions.assertEquals(testTask, returnedTask);
@@ -134,10 +132,10 @@ public class TaskServiceTest {
     @Test
     public void shouldCompleteATask(){
         UUID testTaskId = UUID.randomUUID();
-        UUID testAreaId = UUID.randomUUID();
+        UUID testAreaId = testArea.getId();
 
         TaskRequestPayload payload = new TaskRequestPayload("Teste Atualizado", testAreaId, 1, 1);
-        Task testTask = new Task(testTaskId, "Teste", false, false, false, testArea, testUser);
+        Task testTask = new Task(testTaskId, "Teste", false, true, true, testArea, testUser);
 
         Mockito.when(taskRepository.findById(testTaskId)).thenReturn(Optional.of(testTask));
         Mockito.when(taskRepository.save(testTask)).thenReturn(testTask);
@@ -145,5 +143,26 @@ public class TaskServiceTest {
         Task returnedTask = taskService.complete(testTaskId);
 
         Assertions.assertTrue(returnedTask.getComplete());
+    }
+
+    @Test
+    public void shouldUpdateATask(){
+        //get
+        UUID testTaskId = UUID.randomUUID();
+        UUID testAreaId = testArea.getId();
+        TaskRequestPayload payload = new TaskRequestPayload("Teste Atualizado", testAreaId, 1, 1);
+        Task testTask = new Task(testTaskId, "Teste", false, true, true, testArea, testUser);
+
+        //mock
+        Mockito.when(areaService.findAreaById(payload.areaId())).thenReturn(testArea);
+        Mockito.when(taskRepository.findById(testTaskId)).thenReturn(Optional.of(testTask));
+
+        //when
+        Task updatedTask = taskService.update(payload, testTaskId);
+        //then
+        Assertions.assertEquals(payload.taskTitle(), updatedTask.getTitle());
+        Assertions.assertEquals(testArea, updatedTask.getArea());
+        Assertions.assertTrue(updatedTask.getImportant());
+        Assertions.assertTrue(updatedTask.getUrgent());
     }
 }

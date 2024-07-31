@@ -18,6 +18,9 @@ import java.util.UUID;
 public class TaskService {
 
     @Autowired
+    AreaService areaService;
+
+    @Autowired
     TaskRepository repository;
 
     public Task save(Task task){
@@ -55,5 +58,20 @@ public class TaskService {
         } else {
             throw new BusinessException(ChangeSetPersister.NotFoundException.class.getName(), "the task does not exists");
         }
+    }
+
+    public Task update(TaskRequestPayload payload, UUID taskId){
+        Task found = this.findById(taskId);
+        if(payload.areaId() != null){
+            Area area = areaService.findAreaById(payload.areaId());
+            found.setArea(area);
+        }
+        if(payload.taskTitle() != null) found.setTitle(payload.taskTitle());
+        if(payload.important() != null) found.setImportant(payload.important() != 0);
+        if(payload.urgent() != null) found.setUrgent(payload.urgent() != 0);
+
+        repository.save(found);
+
+        return found;
     }
 }
