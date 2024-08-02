@@ -154,4 +154,10 @@ public class TaskController {
                 )
         );
     }
+
+    @DeleteMapping("/{taskId}")
+    public ResponseEntity<String> deleteTask(@PathVariable("taskId") UUID taskId){
+        taskService.delete(taskId);
+        return ResponseEntity.ok("Deletado com sucesso");
+    }
 }

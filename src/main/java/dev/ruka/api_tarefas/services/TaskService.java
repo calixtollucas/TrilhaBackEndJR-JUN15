@@ -74,4 +74,9 @@ public class TaskService {
 
         return found;
     }
+
+    public void delete(UUID taskId){
+        Task task = this.findById(taskId);
+        repository.delete(task);
+    }
 }

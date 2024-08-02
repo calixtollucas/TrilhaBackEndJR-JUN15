@@ -165,4 +165,16 @@ public class TaskServiceTest {
         Assertions.assertTrue(updatedTask.getImportant());
         Assertions.assertTrue(updatedTask.getUrgent());
     }
+
+    @Test
+    public void shouldDeleteTask(){
+        UUID testTaskId = UUID.randomUUID();
+        Task testTask = new Task(testTaskId, "Teste", false, true, true, testArea, testUser);
+
+        Mockito.when(taskRepository.findById(testTaskId)).thenReturn(Optional.of(testTask));
+        Mockito.doNothing().when(taskRepository).delete(Mockito.any(Task.class));
+
+        taskService.delete(testTaskId);
+        Mockito.verify(taskRepository, Mockito.times(1)).delete(Mockito.any(Task.class));
+    }
 }
