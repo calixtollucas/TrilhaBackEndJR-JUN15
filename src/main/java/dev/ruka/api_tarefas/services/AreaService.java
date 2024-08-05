@@ -12,6 +12,7 @@ import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class AreaService {
@@ -51,6 +52,11 @@ public class AreaService {
                         "The user doesn't have areas"
                 )
         );
+    }
+
+    public Set<Area> findAll(){
+        List<Area> all = repository.findAll();
+        return new HashSet<>(all);
     }
 
     public Area update(AreaRequestPayload payload, UUID areaId) {
